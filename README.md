@@ -1,6 +1,6 @@
 # 🚀 FastAPI + SQLModel Starter
 
-![image](https://github.com/user-attachments/assets/e16423c7-ef5c-4cb2-8ae0-3ca5621d5815)
+![Screenshot from 2025-04-26 13-36-07](https://github.com/user-attachments/assets/c429fcc1-ef70-4aa9-a143-0571c3bcea66)
 
 
 ## 1. Overview
