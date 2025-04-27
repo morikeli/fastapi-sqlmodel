@@ -1,5 +1,5 @@
 from app.core.config import Config
-from app.models import models
+from app.models import books
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.orm import sessionmaker
 from sqlmodel import create_engine, SQLModel, text
