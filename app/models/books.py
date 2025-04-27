@@ -1,3 +1,4 @@
+from .base import IDMixin, TimeStampMixin
 from datetime import date, datetime, timezone
 from sqlmodel import Column, Field, SQLModel
 from sqlalchemy import event
@@ -5,18 +6,18 @@ import sqlalchemy.dialects.sqlite as sq
 import uuid
 
 
-class Book(SQLModel, table=True):
+class Book(SQLModel, IDMixin, TimeStampMixin, table=True):
     __tablename__ = "books"
 
-    id: str = Field(sa_column=Column(sq.TEXT, nullable=False, primary_key=True, unique=True, default=lambda: uuid.uuid4().hex))
+    # id: str = Field(sa_column=Column(sq.TEXT, nullable=False, primary_key=True, unique=True, default=lambda: uuid.uuid4().hex))
     title: str
     author: str
     publisher: str
     published_date: date
     language: str
     page_count: int
-    created_at: datetime = Field(sa_column=Column(sq.TIMESTAMP, default=lambda: datetime.now(timezone.utc)))
-    updated_at: datetime = Field(sa_column=Column(sq.TIMESTAMP, default=lambda: datetime.now(timezone.utc)))
+    # created_at: datetime = Field(sa_column=Column(sq.TIMESTAMP, default=lambda: datetime.now(timezone.utc)))
+    # updated_at: datetime = Field(sa_column=Column(sq.TIMESTAMP, default=lambda: datetime.now(timezone.utc)))
     
 
     def __repr__(self):
