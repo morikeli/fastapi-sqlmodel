@@ -1,15 +1,36 @@
-# 🚀 FastAPI + SQLModel Starter
+# **📚 Bookly**
 
-![Screenshot from 2025-04-26 13-36-07](https://github.com/user-attachments/assets/c429fcc1-ef70-4aa9-a143-0571c3bcea66)
+| Documentation | Documentation on scroll |
+| ------------- | ----------------------- |
+| ![Screenshot from 2025-05-01 17-46-46](https://github.com/user-attachments/assets/f2910e29-f2c0-4cd6-a0f9-2e599e18fe48) | ![Screenshot from 2025-05-01 17-47-08](https://github.com/user-attachments/assets/d37543a0-05ef-4a82-8a7d-06d20fc85818) |
 
 
 ## 1. Overview
 
-Welcome! 👋  
-This project is a simple backend built with **FastAPI** and **SQLModel**.  
-The primary goal was to **learn and demonstrate** how to integrate SQLModel (an ORM and Pydantic hybrid) with FastAPI to create clean, efficient APIs.  
+**Bookly** is a high performance FastAPI-based Book API, RESTful web service designed for managing book-related data efficiently and securely. Built using **FastAPI**, this API enables developers to perform full **CRUD operations (Create, Read, Update, Delete)** on books and related entities such as authors, genres, and publishers.
+
+**Key Features:**
+
+- 🚀 **Fast & Asynchronous:** Powered by FastAPI’s async capabilities for high performance and scalability.
+- 🔐 **Secure Authentication:** Optional JWT-based authentication for protected endpoints.
+- 🧾 **CRUD Functionality:** Endpoints for adding, retrieving, updating, and deleting books.
+- 🔍 **Search & Filtering:** Easily filter books by title, author, genre, or publication year.
+- 📦 **Modular Design:** Clean, modular project structure following best practices for scalability and maintainability.
+- 📄 **Interactive Docs:** Automatically generated Swagger UI and ReDoc for easy API exploration and testing.
+
+**Use Cases:**
+
+- Digital library systems
+- Online bookstores
+- Educational apps needing book data
+- Inventory tracking for physical book collections
+
+This API serves as a solid foundation for any book-related application, whether you're building a lightweight catalog app or a robust online library system.
+
+### Tech stack
 
 🔹 **FastAPI** — Modern, fast (high-performance) web framework.  
+🔹 **Pydantic** - Pydantic is a Python library used for data validation and settings management using Python type annotations.  
 🔹 **SQLModel** — Designed to combine the best of SQLAlchemy and Pydantic.
 
 ---
@@ -34,9 +55,10 @@ Getting started as a user is easy! 🧑‍💻
    uvicorn app:app --reload
    ```
 
-4. **Explore the API docs:**  
-   Visit [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) for a Swagger UI experience! ✨
-
+4. **Explore the API docs:**
+   To access API documentation, visit the following endpoints:
+   - [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) for a Swagger UI experience! ✨
+   - [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc) for a Redoc UI experience! ✨
 ---
 
 ## 3. Developer Instruction
@@ -90,9 +112,9 @@ If you're interested in building on top of this or just exploring, here’s how 
 Contributions are warmly welcome! 🌟
 
 - Fork the repository
-- Create a new branch (`git checkout -b feature/your-feature`)
-- Commit your changes (`git commit -m 'Add some feature'`)
-- Push to the branch (`git push origin feature/your-feature`)
+- Create a new branch (`git checkout -b you-branch-name`)
+- Commit your changes (`git commit -m 'feature: Added a cool feature'`)
+- Push to the branch (`git push origin your-branch-name`)
 - Open a Pull Request
 
 Please ensure your code is clean and follows FastAPI's and Pydantic’s best practices.  
