@@ -1,5 +1,6 @@
-from app.schemas.book_schemas import Book, BookCreateSchema, UpdateBookSchema
+from app.core.dependencies import AccessTokenBearer, RoleChecker
 from app.db.database import get_db
+from app.schemas.book_schemas import Book, BookCreateSchema, UpdateBookSchema
 from app.services.book_service import BookService
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio.session import AsyncSession
@@ -8,22 +9,35 @@ from typing import List
 
 router = APIRouter()
 service = BookService()
+access_token_bearer = AccessTokenBearer()
+role_checker = Depends(RoleChecker(['admin', 'user']))
 
 
 @router.get('/books', response_model=List[Book])
-async def get_all_books(session: AsyncSession = Depends(get_db)):
+async def get_all_books(
+    session: AsyncSession = Depends(get_db), 
+    token: str = Depends(access_token_bearer)
+):
     books = await service.get_all_books(session)
     return books
 
 
-@router.post('/books/create', response_model=Book, status_code=status.HTTP_201_CREATED)
-async def create_a_book(book_data: BookCreateSchema, session: AsyncSession = Depends(get_db)) -> dict:
+@router.post('/books/create', dependencies=[role_checker], response_model=Book, status_code=status.HTTP_201_CREATED)
+async def create_a_book(
+    book_data: BookCreateSchema, 
+    session: AsyncSession = Depends(get_db),
+    token: str = Depends(access_token_bearer)
+) -> dict:
     new_book = await service.create_a_book(book_data, session)    
     return new_book
 
 
-@router.get('/book/{book_id}', response_model=Book)
-async def get_a_book(book_id: str, session: AsyncSession = Depends(get_db)) -> dict:
+@router.get('/book/{book_id}', dependencies=[role_checker], response_model=Book)
+async def get_a_book(
+    book_id: str, 
+    session: AsyncSession = Depends(get_db),
+    token: str = Depends(access_token_bearer)
+) -> dict:
     book = await service.get_a_book_by_id(book_id, session)
 
     if not book:
@@ -31,8 +45,13 @@ async def get_a_book(book_id: str, session: AsyncSession = Depends(get_db)) -> d
 
     return book
 
-@router.patch('/books/{book_id}/update')
-async def update_a_book(book_id: str, book_data: UpdateBookSchema, session: AsyncSession = Depends(get_db)) -> dict:
+@router.patch('/books/{book_id}/update', dependencies=[role_checker],)
+async def update_a_book(
+    book_id: str, 
+    book_data: UpdateBookSchema, 
+    session: AsyncSession = Depends(get_db),
+    token: str = Depends(access_token_bearer)
+) -> dict:
     updated_book = await service.update_a_book(book_id, book_data, session) 
     
     if not updated_book:    
@@ -41,8 +60,12 @@ async def update_a_book(book_id: str, book_data: UpdateBookSchema, session: Asyn
     return updated_book
 
 
-@router.delete('/book/{book_id}/delete', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_a_book(book_id: str, session: AsyncSession = Depends(get_db)) -> None:
+@router.delete('/book/{book_id}/delete', dependencies=[role_checker], status_code=status.HTTP_204_NO_CONTENT)
+async def delete_a_book(
+    book_id: str, 
+    session: AsyncSession = Depends(get_db),
+    token: str = Depends(access_token_bearer)
+) -> None:
     deleted_book = await service.delete_a_book(book_id, session)
 
     if deleted_book:
