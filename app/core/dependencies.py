@@ -1,0 +1,76 @@
+from app.db.database import get_db
+from app.db.redis import token_in_blacklist
+from app.models.user import User
+from app.services.auth_service import AuthService
+from app.utils.auth import decode_access_token
+from fastapi import Depends, HTTPException, Request
+from fastapi.security import HTTPBearer
+from fastapi.security.http import HTTPAuthorizationCredentials
+from sqlmodel.ext.asyncio.session import AsyncSession
+from typing import Any, List
+
+
+auth_servide = AuthService()
+
+
+class TokenBearer(HTTPBearer):
+    def __init__(self, auto_error: bool = True):
+        super().__init__(auto_error=auto_error)
+    
+    async def __call__(self, request: Request) -> HTTPAuthorizationCredentials | None:
+        creds = await super().__call__(request)
+        token = creds.credentials
+        token_data = decode_access_token(token)
+
+        if not self.token_valid(token):
+            raise HTTPException(status_code=403, detail="Invalid or expired token!")
+
+        if await token_in_blacklist(token_data["jti"]):
+            raise HTTPException(status_code=403, detail="This token has been revoked! Please login again.")
+
+        self.verify_access_token(token_data)
+        return token_data
+
+    def token_valid(self, token: str) -> bool:
+        token_data = decode_access_token(token)
+
+        if token_data is None:
+            return False
+        
+        return True
+    
+    def verify_access_token(self, token_data):
+        raise NotImplementedError("Subclasses must implement this method.")
+
+
+class AccessTokenBearer(TokenBearer):
+    def verify_access_token(self, token_data: dict):
+        if token_data and token_data["refresh"]:
+            raise HTTPException(status_code=403, detail="Authentication required!")
+
+
+class RefreshTokenBearer(TokenBearer):
+    def verify_access_token(self, token_data: dict):
+        if token_data and not token_data["refresh"]:
+            raise HTTPException(status_code=403, detail="Please provide a refresh token!")
+
+
+async def get_current_user(
+    token: dict = Depends(AccessTokenBearer()),
+    session: AsyncSession = Depends(get_db),
+):
+    user_email = token["user"]["email"]
+    user = await auth_servide.get_user_by_email(user_email, session)
+    return user
+
+
+class RoleChecker:
+    def __init__(self, allowed_roles: List[str]):
+        self.allowed_roles = allowed_roles
+    
+
+    async def __call__(self, current_user: User = Depends(get_current_user)) -> Any:
+        if current_user.user_role in self.allowed_roles:
+            return True
+        
+        raise HTTPException(status_code=403, detail="You are not permitted to perform this action!")
