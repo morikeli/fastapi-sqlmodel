@@ -20,6 +20,11 @@ class User(SQLModel, IDMixin, TimeStampMixin, table=True):
     username: str
     email: str
     password: str = Field(exclude=True)     # hide password in response data
+    user_role: str = Field(sa_column=Column(
+        sq.VARCHAR(10),
+        nullable=False,
+        server_default="user",
+    ))
     is_verified: bool = False
 
 
