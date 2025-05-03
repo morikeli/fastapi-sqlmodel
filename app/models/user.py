@@ -4,7 +4,6 @@ import sqlalchemy as sa
 import sqlalchemy.dialects.sqlite as sq
 import uuid
 
-from app import models
 from .base import TimeStampMixin
 
 
@@ -38,6 +37,13 @@ class User(SQLModel, TimeStampMixin, table=True):
     ))
     is_verified: bool = False
 
+    # relationship
+    books: List["Book"] = Relationship(back_populates="user", sa_relationship_kwargs={'lazy': 'selectin'})
+
 
     def __repr__(self):
         return f"<User(username={self.username}, email={self.email})>"
+
+
+# Resolve forward reference
+User.model_rebuild()

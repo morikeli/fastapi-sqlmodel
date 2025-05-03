@@ -6,7 +6,6 @@ import sqlalchemy as sa
 import sqlalchemy.dialects.sqlite as sq
 import uuid
 
-from app import models
 from .base import TimeStampMixin
 
 
@@ -27,13 +26,14 @@ class Book(SQLModel, TimeStampMixin, table=True):
     language: str
     user_id: Optional[str] = Field(..., foreign_key='users.id') 
     page_count: int
-    
+
+    # relationship
+    user: Optional["User"] = Relationship(back_populates="books")
+
 
     def __repr__(self):
         return f"<Book(title={self.title}, author={self.author})>"
-    
 
-@event.listens_for(Book, "before_update", propagate=True)
-def update_timestamp(mapper, connection, target):
-    """Automatically update the `updated_at` and `created_at` fields when a Book is updated."""
-    target.updated_at = datetime.now(timezone.utc)
+
+# 
+Book.model_rebuild()
