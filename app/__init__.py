@@ -1,8 +1,9 @@
-from app.db.database import init_db
-from app.routers.books import router as book_router
-from app.routers.auth import router as auth_router
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+
+from app.db.database import init_db
+from app.routers.auth import router as auth_router
+from app.routers.books import router as book_router
 
 
 version = 'v1'
