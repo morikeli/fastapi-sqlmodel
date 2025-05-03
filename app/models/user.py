@@ -1,9 +1,11 @@
-from .base import TimeStampMixin
-from sqlmodel import Column, Field, SQLModel
-from typing import Optional
+from sqlmodel import Column, Field, Relationship, SQLModel
+from typing import List, Optional
 import sqlalchemy as sa
 import sqlalchemy.dialects.sqlite as sq
 import uuid
+
+from app import models
+from .base import TimeStampMixin
 
 
 class User(SQLModel, TimeStampMixin, table=True):

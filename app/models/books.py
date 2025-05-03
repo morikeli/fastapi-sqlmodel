@@ -1,11 +1,13 @@
-from .base import TimeStampMixin
 from datetime import date, datetime, timezone
-from sqlmodel import Column, Field, SQLModel
+from sqlmodel import Column, Field, Relationship, SQLModel
 from sqlalchemy import event
 from typing import Optional
 import sqlalchemy as sa
 import sqlalchemy.dialects.sqlite as sq
 import uuid
+
+from app import models
+from .base import TimeStampMixin
 
 
 class Book(SQLModel, TimeStampMixin, table=True):
