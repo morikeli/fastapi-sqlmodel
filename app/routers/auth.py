@@ -7,7 +7,7 @@ from app.core.dependencies import AccessTokenBearer, get_current_user, RefreshTo
 from app.db.database import get_db
 from app.db.redis import add_token_to_blacklist
 from app.schemas.auth_schema import UserCreate, UserLogin
-from app.schemas.user_schema import UserResponse
+from app.schemas.user_schema import UserModel, UserResponse
 from app.services.auth_service import AuthService
 from app.utils.auth import create_access_token, decode_access_token, verify_password
 
@@ -96,7 +96,7 @@ async def refresh_token(
     raise HTTPException(status_code=400, detail="Refresh token expired!")
 
 
-@router.get('/user/me')
+@router.get('/user/me', response_model=UserModel)
 async def get_user_details(
     user = Depends(get_current_user),
     _: bool = Depends(role_checker),
