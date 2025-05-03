@@ -3,6 +3,7 @@ from typing import List, Optional
 
 from app.schemas.book_schemas import Book
 
+
 class UserResponse(BaseModel):
     id: str
     first_name: Optional[str] = None
