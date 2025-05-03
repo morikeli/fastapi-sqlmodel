@@ -36,7 +36,7 @@ async def create_a_book(
 async def get_a_book(
     book_id: str, 
     session: AsyncSession = Depends(get_db),
-    token: str = Depends(access_token_bearer)
+    token: dict = Depends(access_token_bearer)
 ) -> dict:
     book = await service.get_a_book_by_id(book_id, session)
 
@@ -50,7 +50,7 @@ async def update_a_book(
     book_id: str, 
     book_data: UpdateBookSchema, 
     session: AsyncSession = Depends(get_db),
-    token: str = Depends(access_token_bearer)
+    token: dict = Depends(access_token_bearer)
 ) -> dict:
     updated_book = await service.update_a_book(book_id, book_data, session) 
     
@@ -64,7 +64,7 @@ async def update_a_book(
 async def delete_a_book(
     book_id: str, 
     session: AsyncSession = Depends(get_db),
-    token: str = Depends(access_token_bearer)
+    token: dict = Depends(access_token_bearer)
 ) -> None:
     deleted_book = await service.delete_a_book(book_id, session)
 
