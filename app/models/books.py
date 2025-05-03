@@ -1,6 +1,5 @@
-from datetime import date, datetime, timezone
-from sqlmodel import Column, Field, Relationship, SQLModel
-from sqlalchemy import event
+from datetime import date
+from sqlmodel import Field, Relationship, SQLModel
 from typing import Optional
 import sqlalchemy as sa
 import sqlalchemy.dialects.sqlite as sq

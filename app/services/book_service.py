@@ -1,4 +1,3 @@
-from datetime import datetime
 from sqlmodel import select, desc
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -33,8 +32,6 @@ class BookService:
         # Parse published_date correctly before creating the object
         new_book = Book(**req_data)
         new_book.user_id = user_id
-
-        # new_book.published_date = datetime.strptime(req_data["published_date"], "%Y-%m-%d").date()
 
         session.add(new_book)   # add the book to the session
         await session.commit()  # save the created book
