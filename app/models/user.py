@@ -1,11 +1,12 @@
 from .base import IDMixin, TimeStampMixin
 from sqlmodel import Column, Field, SQLModel
 from typing import Optional
+import sqlalchemy as sa
 import sqlalchemy.dialects.sqlite as sq
 import uuid
 
 
-class User(SQLModel, IDMixin, TimeStampMixin, table=True):
+class User(SQLModel, TimeStampMixin, table=True):
     """
     User model for authentication and user management.
     Inherits from SQLModel, IDMixin and TimeStampMixin to provide
@@ -14,7 +15,15 @@ class User(SQLModel, IDMixin, TimeStampMixin, table=True):
     """
     __tablename__ = "users"
 
-    
+
+    id: str = Field(
+        default_factory=lambda: uuid.uuid4().hex,
+        sa_type=sa.String(50),
+        primary_key=True,
+        unique=True,
+        nullable=False,
+        
+    )
     first_name: Optional[str]
     last_name: Optional[str]
     username: str
