@@ -12,6 +12,12 @@ class BookService:
         return result.all()
     
 
+    async def get_current_user_books(self, user_id: str, session: AsyncSession):
+        stmt = select(Book).filter_by(user_id=user_id).order_by(desc(Book.created_at))
+        result = await session.exec(stmt)
+        return result.all()
+    
+
     async def get_a_book_by_id(self, book_id: str, session: AsyncSession):
         stmt = select(Book).where(Book.id == book_id)
         result = await session.exec(stmt)
