@@ -19,6 +19,19 @@ role_checker = RoleChecker(['admin', 'user'])
 REFRESH_TOKEN_EXPIRY = True
 
 
+@router.post('/signup', response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+async def create_user_account(user_data: UserCreate, session: AsyncSession = Depends(get_db)):
+    email = user_data.email
+
+    user_exists = await auth_service.user_exists(email, session)
+    
+    if user_exists:
+        raise HTTPException(status_code=403, detail='User with email already exists!')
+
+    new_user = await auth_service.create_user(user_data, session)
+    return new_user
+
+
 @router.post('/login')
 async def login(user_credentials: UserLogin, session: AsyncSession = Depends(get_db)):
     email = user_credentials.email
@@ -100,17 +113,4 @@ async def logout(token_details: dict = Depends(AccessTokenBearer())):
             "message": "User logged out successfully!",
         }
     )
-
-
-@router.post('/signup', response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-async def create_user_account(user_data: UserCreate, session: AsyncSession = Depends(get_db)):
-    email = user_data.email
-
-    user_exists = await auth_service.user_exists(email, session)
-    
-    if user_exists:
-        raise HTTPException(status_code=403, detail='User with email already exists!')
-
-    new_user = await auth_service.create_user(user_data, session)
-    return new_user
 
