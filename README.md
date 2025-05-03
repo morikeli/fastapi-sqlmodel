@@ -1,8 +1,6 @@
 # **📚 Bookly**
 
-| Documentation | Documentation on scroll |
-| ------------- | ----------------------- |
-| ![Screenshot from 2025-05-01 17-46-46](https://github.com/user-attachments/assets/f2910e29-f2c0-4cd6-a0f9-2e599e18fe48) | ![Screenshot from 2025-05-01 17-47-08](https://github.com/user-attachments/assets/d37543a0-05ef-4a82-8a7d-06d20fc85818) |
+![image](https://github.com/user-attachments/assets/fe640d5f-0759-4947-967e-7be155f22505)
 
 
 ## 1. Overview
