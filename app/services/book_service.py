@@ -20,11 +20,12 @@ class BookService:
         return book if book is not None else None
     
 
-    async def create_a_book(self, book_data: BookCreateSchema, session: AsyncSession):
+    async def create_a_book(self, book_data: BookCreateSchema, user_id:str, session: AsyncSession):
         req_data = book_data.model_dump()   # request data
 
         # Parse published_date correctly before creating the object
         new_book = Book(**req_data)
+        new_book.user_id = user_id
 
         # new_book.published_date = datetime.strptime(req_data["published_date"], "%Y-%m-%d").date()
 
