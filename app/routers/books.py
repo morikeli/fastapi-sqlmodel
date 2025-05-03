@@ -16,19 +16,31 @@ role_checker = Depends(RoleChecker(['admin', 'user']))
 @router.get('/books', response_model=List[Book])
 async def get_all_books(
     session: AsyncSession = Depends(get_db), 
-    token: str = Depends(access_token_bearer)
+    token: dict = Depends(access_token_bearer)
 ):
     books = await service.get_all_books(session)
     return books
 
 
-@router.post('/books/create', dependencies=[role_checker], response_model=Book, status_code=status.HTTP_201_CREATED)
+@router.get('/books/{user_id}', response_model=List[Book])
+async def get_books_created_by_a_user(
+    user_id: str,
+    session: AsyncSession = Depends(get_db), 
+    token: dict = Depends(access_token_bearer)
+):
+    books = await service.get_current_user_books(user_id, session)
+    return books
+
+
+@router.post('/book/create', dependencies=[role_checker], response_model=Book, status_code=status.HTTP_201_CREATED)
 async def create_a_book(
     book_data: BookCreateSchema, 
     session: AsyncSession = Depends(get_db),
-    token: str = Depends(access_token_bearer)
+    token: dict = Depends(access_token_bearer)
 ) -> dict:
-    new_book = await service.create_a_book(book_data, session)    
+    
+    user_id = token.get('user')["user_id"]
+    new_book = await service.create_a_book(book_data, user_id, session)    
     return new_book
 
 
