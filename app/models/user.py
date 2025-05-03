@@ -1,4 +1,4 @@
-from .base import IDMixin, TimeStampMixin
+from .base import TimeStampMixin
 from sqlmodel import Column, Field, SQLModel
 from typing import Optional
 import sqlalchemy as sa

@@ -1,4 +1,4 @@
-from .base import IDMixin, TimeStampMixin
+from .base import TimeStampMixin
 from datetime import date, datetime, timezone
 from sqlmodel import Column, Field, SQLModel
 from sqlalchemy import event
