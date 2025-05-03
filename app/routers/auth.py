@@ -62,7 +62,6 @@ async def login(user_credentials: UserLogin, session: AsyncSession = Depends(get
 async def refresh_token(
     token_data: dict = Depends(RefreshTokenBearer()),
 ):
-    print(f'Token data: {token_data}')
     expiry_timestamp = token_data["exp"]
     
     if datetime.fromtimestamp(expiry_timestamp) > datetime.now():
