@@ -1,15 +1,26 @@
 from datetime import datetime, timedelta
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from app import errors
+from app.core.config import Config
 from app.core.dependencies import AccessTokenBearer, get_current_user, RefreshTokenBearer, RoleChecker
 from app.db.database import get_db
 from app.db.redis import add_token_to_blacklist
-from app.schemas.auth_schema import UserCreate, UserLogin
+from app.mails.send_mail import create_message, mail
+from app.schemas.auth_schema import ConfirmResetPasswordModel, EmailModel, PasswordResetModel, UserCreate, UserLogin
 from app.schemas.user_schema import UserModel, UserResponse
 from app.services.auth_service import AuthService
-from app.utils.auth import create_access_token, decode_access_token, verify_password
+from app.utils.auth import (
+    create_access_token, 
+    create_url_safe_token, 
+    decode_access_token, 
+    decode_url_safe_token, 
+    hash_password,
+    verify_password,
+
+)
 
 
 router = APIRouter()
