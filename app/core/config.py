@@ -29,3 +29,8 @@ class Settings(BaseSettings):
 
 
 Config = Settings()
+
+
+# Message broker
+# broker_url = Config.REDIS_URL
+# result_backend = Config.REDIS_URL
