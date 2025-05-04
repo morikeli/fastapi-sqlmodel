@@ -50,3 +50,16 @@ def decode_access_token(token: str) -> dict:
         logging.exception(e)
         return None
 
+
+def create_url_safe_token(data: dict):
+    private_key = serializer.dumps(data)
+    return private_key
+
+
+def decode_url_safe_token(private_key: str, max_age=1800):
+    try:
+        data = serializer.loads(private_key, max_age=max_age)
+        return data
+    
+    except Exception as e:
+        logging.error(str(e))
