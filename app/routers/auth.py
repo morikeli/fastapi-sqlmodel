@@ -100,38 +100,35 @@ async def login(user_credentials: UserLogin, session: AsyncSession = Depends(get
     password = user_credentials.password
 
     user = await auth_service.get_user_by_email(email, session)
-
-    if user is None:
-        raise HTTPException(status_code=403, detail="Invalid user credentials!")
-    
-
     password_valid = verify_password(password, user.password)
 
-    if password_valid:
-        access_token = create_access_token(
-            data={
-                "email": user.email,
-                "user_id": user.id,
-                "role": user.user_role,
-            }
-        )
+    if not password_valid or user is None:
+        raise errors.InvalidUserCredentialsException()
+    
+    access_token = create_access_token(
+        data={
+            "email": user.email,
+            "user_id": user.id,
+            "role": user.user_role,
+        }
+    )
 
-        refresh_token = create_access_token(
-            data={
-                "email": user.email,
-                "user_id": user.id,
-            },
-            expiry=timedelta(days=REFRESH_TOKEN_EXPIRY),
-            refresh=True,
-        )
+    refresh_token = create_access_token(
+        data={
+            "email": user.email,
+            "user_id": user.id,
+        },
+        expiry=timedelta(days=REFRESH_TOKEN_EXPIRY),
+        refresh=True,
+    )
 
-        return JSONResponse(
-            content={
-                "message": "User logged in successfully!",
-                "access_token": access_token,
-                "refresh_token": refresh_token,
-            }
-        )
+    return JSONResponse(
+        content={
+            "message": "User logged in successfully!",
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+        }
+    )
 
 
 @router.get('/refresh-token')
