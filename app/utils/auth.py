@@ -1,9 +1,11 @@
-from app.core.config import Config
 from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
+from itsdangerous import URLSafeTimedSerializer
 import jwt
 import logging
 import uuid
+
+from app.core.config import Config
 
 
 pwd_context = CryptContext(
@@ -11,6 +13,7 @@ pwd_context = CryptContext(
 )
 
 ACCESS_TOKEN_EXPIRY = 3600
+serializer = URLSafeTimedSerializer(secret_key=Config.SECRET_KEY, salt="email-configuration")
 
 
 def hash_password(password: str) -> str:
