@@ -163,6 +163,70 @@ async def get_user_details(
     return user
 
 
+@router.post('/reset-password')
+async def reset_password(user_email: PasswordResetModel):
+    email = user_email.email
+
+    private_key = create_url_safe_token({"email": email})
+    reset_password_link = f"http://{Config.DOMAIN}/api/v1/auth/confirm-reset-password/{private_key}"
+    html_msg = f"""
+    <h1>Password reset</h1>
+    <p>Please click this <a href="{reset_password_link}">link<a/> to reset your password.</p>
+    """
+
+    message = create_message(
+        recipients=[email],
+        subject="Reset password",
+        body=html_msg
+    )
+    await mail.send_message(message)
+    return JSONResponse(
+        content={
+            "message": "Please check your email for instructions to reset your password.",
+        },
+        status_code=200
+    )
+
+
+@router.post('/confirm-reset-password/{user_private_key}')
+async def confirm_reset_password(
+    user_private_key: str, 
+    password: ConfirmResetPasswordModel, 
+    session: AsyncSession = Depends(get_db),
+):
+    new_password = password.new_password
+    confirm_password = password.confirm_new_password
+
+    if confirm_password != new_password:
+        raise HTTPException(status_code=400, detail="Passwords don't match!")
+    
+    user_data = decode_url_safe_token(user_private_key)
+    user_email = user_data.get('email')
+
+    if not user_email:
+        return JSONResponse(
+            content={
+                "message": "Could not reset your password. An error ocurred!",
+            },
+            status_code=500,
+        )
+    
+    # Check if user exists
+    user = await auth_service.get_user_by_email(user_email, session)
+    
+    if not user:
+        raise errors.UserNotFoundException()
+
+    user_hashed_password = hash_password(new_password)
+    await auth_service.update_user(user, {'password': user_hashed_password}, session)
+    return JSONResponse(
+        content={
+            "message": "Your password was reset successfully!"
+        },
+        status_code=200,
+    )
+
+
 @router.post('/logout', status_code=status.HTTP_200_OK)
 async def logout(token_details: dict = Depends(AccessTokenBearer())):
     jti = token_details["jti"]
