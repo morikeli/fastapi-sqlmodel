@@ -152,7 +152,7 @@ async def refresh_token(
             }
         )    
     
-    raise HTTPException(status_code=400, detail="Refresh token expired!")
+    raise errors.InvalidTokenException()
 
 
 @router.get('/user/me', response_model=UserModel)
