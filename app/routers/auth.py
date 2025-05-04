@@ -30,17 +30,68 @@ role_checker = RoleChecker(['admin', 'user'])
 REFRESH_TOKEN_EXPIRY = True
 
 
-@router.post('/signup', response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-async def create_user_account(user_data: UserCreate, session: AsyncSession = Depends(get_db)):
+@router.post('/signup', status_code=status.HTTP_201_CREATED)
+async def create_user_account(user_data: UserCreate, bg_task: BackgroundTasks, session: AsyncSession = Depends(get_db)):
     email = user_data.email
 
     user_exists = await auth_service.user_exists(email, session)
     
     if user_exists:
-        raise HTTPException(status_code=403, detail='User with email already exists!')
+        raise errors.UserAlreadyExistsException()
 
     new_user = await auth_service.create_user(user_data, session)
-    return new_user
+    
+    private_key = create_url_safe_token({"email": email})
+    email_verification_link = f"http://{Config.DOMAIN}/api/v1/auth/verify/{private_key}"
+    html_msg = f"""
+    <h1>Verify your email</h1>
+    <p>Please click this <a href="{email_verification_link}">link<a/> to verify your email.</p>
+    """
+
+    message = create_message(
+        recipients=[email],
+        subject="Verify your email",
+        body=html_msg
+    )
+    bg_task.add_task(mail.send_message, message)
+    return {"message": "Account created successfully! Check your email to verify your account."}
+
+
+@router.get('/verify/{user_private_key}')
+async def verify_email(user_private_key: str, session: AsyncSession = Depends(get_db)):
+    user_data = decode_url_safe_token(user_private_key)
+    user_email = user_data.get('email')
+
+    if not user_email:
+        return JSONResponse(
+            content={
+                "message": "Could not verify your email. An error ocurred!",
+            },
+            status_code=500,
+        )
+    
+    user = await auth_service.get_user_by_email(user_email, session)
+    if not user:
+        raise errors.UserNotFoundException()
+
+    await auth_service.update_user(user, {'is_verified': True}, session)
+    return JSONResponse(
+        content={
+            "message": "User account verified successfully!"
+        },
+        status_code=200,
+    )
+    
+
+@router.post('/send-mail')
+async def send_mail(emails: EmailModel):
+    email = emails.email_addresses
+    html = "<h1>Welcome to the app!</h1>"
+
+    message = create_message(recipients=email, subject="Welcome new user", body=html)
+    await mail.send_message(message)
+
+    return JSONResponse(content={"message": "Email sent successfully!"})
 
 
 @router.post('/login')
