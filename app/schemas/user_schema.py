@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 
 from app.schemas.book_schemas import Book
+from app.schemas.review_schema import ReviewModel
 
 
 class UserResponse(BaseModel):
@@ -15,3 +16,4 @@ class UserResponse(BaseModel):
 
 class UserModel(UserResponse):
     books: List[Book]
+    reviews: List[ReviewModel]
