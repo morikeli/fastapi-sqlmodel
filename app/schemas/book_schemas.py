@@ -1,5 +1,8 @@
 from datetime import date, datetime
 from pydantic import BaseModel, field_validator
+from typing import List
+
+from app.schemas.review_schema import ReviewModel
 
 
 class Book(BaseModel):
@@ -12,6 +15,10 @@ class Book(BaseModel):
     page_count: int
     created_at: datetime
     updated_at: datetime
+
+
+class BookDetails(Book):
+    reviews:List[ReviewModel]
 
 
 class BookCreateSchema(BaseModel):
