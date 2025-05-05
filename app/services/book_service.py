@@ -1,6 +1,7 @@
 from sqlmodel import select, desc
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from app import errors
 from app.models.books import Book
 from app.schemas.book_schemas import BookCreateSchema, UpdateBookSchema
 
@@ -41,10 +42,11 @@ class BookService:
 
     async def update_a_book(self, book_id: str, book_data: UpdateBookSchema, session: AsyncSession):
         req_data = await self.get_a_book_by_id(book_id, session)
+
+        if not req_data:
+            raise errors.BookNotFoundException()
+
         update_book = book_data.model_dump()
-        
-        if not update_book:
-            return None
         
         for keys, values in update_book.items():
             setattr(req_data, keys, values)
