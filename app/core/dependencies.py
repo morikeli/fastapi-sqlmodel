@@ -25,10 +25,10 @@ class TokenBearer(HTTPBearer):
         token_data = decode_access_token(token)
 
         if not self.token_valid(token):
-            raise HTTPException(status_code=403, detail="Invalid or expired token!")
+            raise errors.InvalidTokenException()
 
         if await token_in_blacklist(token_data["jti"]):
-            raise HTTPException(status_code=403, detail="This token has been revoked! Please login again.")
+            raise errors.RevokedTokenException()
 
         self.verify_access_token(token_data)
         return token_data
@@ -48,13 +48,13 @@ class TokenBearer(HTTPBearer):
 class AccessTokenBearer(TokenBearer):
     def verify_access_token(self, token_data: dict):
         if token_data and token_data["refresh"]:
-            raise HTTPException(status_code=403, detail="Authentication required!")
+            raise errors.AccessTokenRequiredException()
 
 
 class RefreshTokenBearer(TokenBearer):
     def verify_access_token(self, token_data: dict):
         if token_data and not token_data["refresh"]:
-            raise HTTPException(status_code=403, detail="Please provide a refresh token!")
+            raise errors.RefreshTokenRequiredException()
 
 
 async def get_current_user(
