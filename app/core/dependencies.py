@@ -72,7 +72,11 @@ class RoleChecker:
     
 
     async def __call__(self, current_user: User = Depends(get_current_user)) -> Any:
+        # Check if the user is verified
+        if not current_user.is_verified:
+            raise errors.AccountNotVerifiedException()
+        
         if current_user.user_role in self.allowed_roles:
             return True
-        
-        raise HTTPException(status_code=403, detail="You are not permitted to perform this action!")
+
+        raise errors.PermissionRequiredException()
