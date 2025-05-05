@@ -1,13 +1,15 @@
+from fastapi import Depends, Request
+from fastapi.security import HTTPBearer
+from fastapi.security.http import HTTPAuthorizationCredentials
+from sqlmodel.ext.asyncio.session import AsyncSession
+from typing import Any, List
+
 from app.db.database import get_db
 from app.db.redis import token_in_blacklist
 from app.models.user import User
 from app.services.auth_service import AuthService
 from app.utils.auth import decode_access_token
-from fastapi import Depends, HTTPException, Request
-from fastapi.security import HTTPBearer
-from fastapi.security.http import HTTPAuthorizationCredentials
-from sqlmodel.ext.asyncio.session import AsyncSession
-from typing import Any, List
+from app import errors
 
 
 auth_servide = AuthService()
