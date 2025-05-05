@@ -37,8 +37,9 @@ class User(SQLModel, TimeStampMixin, table=True):
     ))
     is_verified: bool = False
 
-    # relationship
+    # relationships
     books: List["Book"] = Relationship(back_populates="user", sa_relationship_kwargs={'lazy': 'selectin'})
+    reviews: List["Review"] = Relationship(back_populates="user", sa_relationship_kwargs={'lazy': 'selectin'})
 
 
     def __repr__(self):
