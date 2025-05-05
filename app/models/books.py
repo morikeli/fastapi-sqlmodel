@@ -1,6 +1,6 @@
 from datetime import date
 from sqlmodel import Field, Relationship, SQLModel
-from typing import Optional
+from typing import List, Optional
 import sqlalchemy as sa
 import sqlalchemy.dialects.sqlite as sq
 import uuid
