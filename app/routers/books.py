@@ -55,7 +55,7 @@ async def get_a_book(
     book = await service.get_a_book_by_id(book_id, session)
 
     if not book:
-        raise HTTPException(status_code=404, detail="Book not found")
+        raise errors.BookNotFoundException()
 
     return book
 
@@ -83,6 +83,6 @@ async def delete_a_book(
     deleted_book = await service.delete_a_book(book_id, session)
 
     if deleted_book:
-        raise HTTPException(status_code=404, detail="Book not found")
+        raise errors.BookNotFoundException()
 
     return None
