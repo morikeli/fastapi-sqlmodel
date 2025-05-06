@@ -68,9 +68,6 @@ async def update_a_book(
 ) -> dict:
     updated_book = await service.update_a_book(book_id, book_data, session) 
     
-    if not updated_book:    
-        # return 404 if the book is not found
-        raise HTTPException(status_code=404, detail="Book not found")
     return updated_book
 
 
