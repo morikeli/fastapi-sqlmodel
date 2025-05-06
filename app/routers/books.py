@@ -15,7 +15,7 @@ access_token_bearer = AccessTokenBearer()
 role_checker = Depends(RoleChecker(['admin', 'user']))
 
 
-@router.get('/books', response_model=List[Book])
+@router.get('/books', dependencies=[role_checker], response_model=List[Book])
 async def get_all_books(
     session: AsyncSession = Depends(get_db), 
     token: dict = Depends(access_token_bearer)
@@ -24,7 +24,7 @@ async def get_all_books(
     return books
 
 
-@router.get('/books/{user_id}', response_model=List[Book])
+@router.get('/books/{user_id}', dependencies=[role_checker], response_model=List[Book])
 async def get_books_created_by_a_user(
     user_id: str,
     session: AsyncSession = Depends(get_db), 
@@ -46,7 +46,7 @@ async def create_a_book(
     return new_book
 
 
-@router.get('/book/{book_id}', dependencies=[role_checker], response_model=Book)
+@router.get('/book/{book_id}', dependencies=[role_checker], response_model=BookDetails)
 async def get_a_book(
     book_id: str, 
     session: AsyncSession = Depends(get_db),
