@@ -2,9 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from typing import List
 
+from app import errors
 from app.core.dependencies import AccessTokenBearer, RoleChecker
 from app.db.database import get_db
-from app.schemas.book_schemas import Book, BookCreateSchema, UpdateBookSchema
+from app.schemas.book_schemas import Book, BookDetails, BookCreateSchema, UpdateBookSchema
 from app.services.book_service import BookService
 
 
